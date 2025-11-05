@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Tile } from './tile.model';
 import { HttpClient } from '@angular/common/http';
-import { ErrorService } from './error.service';
+import { ErrorService } from '../error.service';
 import { catchError, map, tap, throwError } from 'rxjs';
 
 @Injectable({
@@ -32,21 +32,21 @@ export class TilesService {
   addTile(tile: Tile) {
     const currentTiles = this.tiles();
 
-    if (currentTiles.some((t) => t.id === tile.id)) {
-      return throwError(() => new Error('Tile s tímto ID už existuje.'));
-    }
-
-    this.tiles.set([...currentTiles, tile]);
-
     return this.http
       .put<{ tiles: Tile[] }>('http://localhost:3000/tiles', {
         tile,
       })
       .pipe(
+        tap((res) => {
+          this.tiles.set(res.tiles);
+        }),
         catchError((err) => {
-          this.tiles.set(currentTiles);
-          // this.errorService.showError('Chyba při přidávání tile.');
-          return throwError(() => new Error('Chyba při přidávání tile'));
+          if (err.status === 409) {
+            // Tile už existuje
+            return throwError(() => new Error('Tile already exists.'));
+          }
+
+          return throwError(() => new Error('Error adding tile.'));
         })
       );
   }

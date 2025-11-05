@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core';
-import { Tile } from '../../../tile.model';
+import { Tile } from '../tile.model';
 
 @Component({
   selector: 'app-tile',

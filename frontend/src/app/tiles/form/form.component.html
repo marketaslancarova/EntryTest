@@ -1,0 +1,22 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="tile-form">
+  <h2>Add tile</h2>
+
+  <div class="control-row">
+    <div class="control">
+      <label for="text">Text</label>
+      <input id="text" type="text" formControlName="text" />
+    </div>
+
+    <div class="control">
+      <label for="bg">Background</label>
+      <input id="bg" type="text" formControlName="bg" placeholder="#3366ff" />
+    </div>
+
+    <div class="control">
+      <label for="link">Link</label>
+      <input id="link" type="url" formControlName="link" placeholder="https://..." />
+    </div>
+  </div>
+
+  <button class="button" type="submit" [disabled]="form.invalid">Add tile</button>
+</form>

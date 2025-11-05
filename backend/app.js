@@ -28,6 +28,7 @@ app.get("/tiles", async (req, res) => {
 
 app.put("/tiles", async (req, res) => {
   const newTile = req.body.tile;
+  console.log("BODY:", req.body);
 
   if (!newTile || !newTile.text || !newTile.bg || newTile.link === undefined) {
     return res.status(400).json({ message: "Invalid tile data" });
@@ -50,7 +51,7 @@ app.put("/tiles", async (req, res) => {
     "./data/tiles.json",
     JSON.stringify(updatedTiles, null, 2)
   );
-
+  console;
   res.status(200).json({ tiles: updatedTiles });
 });
 

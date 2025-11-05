@@ -1,11 +1,12 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { TilesService } from '../../tiles.service';
-import { Tile } from '../../tile.model';
-import { TileComponent } from '../tile/tile.component/tile.component';
+import { TilesService } from './tiles.service';
+import { Tile } from './tile.model';
+import { TileComponent } from './tile/tile.component';
+import { FormComponent } from './form/form.component';
 
 @Component({
   selector: 'app-tiles',
-  imports: [TileComponent],
+  imports: [TileComponent, FormComponent],
   templateUrl: './tiles.component.html',
   styleUrl: './tiles.component.scss',
 })
@@ -30,6 +31,11 @@ export class TilesComponent implements OnInit {
     });
 
     this.destroyRef.onDestroy(() => sub.unsubscribe());
+  }
+
+  onAddTile(tile: Tile) {
+    console.log(tile);
+    this.service.addTile(tile).subscribe();
   }
 
   onDelete(tile: Tile) {

@@ -1,5 +1,5 @@
 <h2>Tiles</h2>
-
+<app-form (addTile)="onAddTile($event)" />
 @if (isFetching()) {
 <p>🔄 Načítám data...</p>
 } @if (error()) {

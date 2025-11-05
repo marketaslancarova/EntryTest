@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { TilesComponent } from './tiles/tiles.component/tiles.component';
+import { TilesComponent } from './tiles/tiles.component';
 
 @Component({
   selector: 'app-root',
