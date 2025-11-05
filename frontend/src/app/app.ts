@@ -9,4 +9,9 @@ import { TilesComponent } from './tiles/tiles.component';
 })
 export class App {
   protected readonly title = signal('frontend');
+  showTilesSection = signal(false);
+
+  toggleTilesSection() {
+    this.showTilesSection.update((prevState) => !prevState);
+  }
 }

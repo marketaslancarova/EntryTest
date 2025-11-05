@@ -34,7 +34,6 @@ export class TilesComponent implements OnInit {
   }
 
   onAddTile(tile: Tile) {
-    console.log(tile);
     this.service.addTile(tile).subscribe();
   }
 

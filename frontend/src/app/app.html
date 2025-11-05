@@ -1,2 +1,9 @@
-<p>Hello</p>
+<h1>{{ title() }}</h1>
+
+<button (click)="toggleTilesSection()">
+  {{ showTilesSection() ? 'Hide tiles' : 'Show tiles' }}
+</button>
+
+@if (showTilesSection()) {
 <app-tiles />
+}
