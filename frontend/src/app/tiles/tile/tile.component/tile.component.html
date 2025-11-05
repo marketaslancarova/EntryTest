@@ -1,0 +1,6 @@
+<div class="tile" [style.background]="tile().bg">
+  <h3>{{ tile().text }}</h3>
+  <a [href]="tile().link" target="_blank">{{ tile().link }}</a>
+
+  <button (click)="onDeleteClick()">🗑️</button>
+</div>

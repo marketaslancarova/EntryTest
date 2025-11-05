@@ -1,0 +1,15 @@
+<h2>Tiles</h2>
+
+@if (isFetching()) {
+<p>🔄 Načítám data...</p>
+} @if (error()) {
+<p class="error">⚠️ {{ error() }}</p>
+} @if (tiles().length > 0) {
+
+<div class="tiles-grid">
+  @for (tile of tiles(); track tile.id) {
+  <app-tile [tile]="tile" (delete)="onDelete(tile)" /> }
+</div>
+} @else {
+<p>Žádné dlaždice zatím nejsou.</p>
+}

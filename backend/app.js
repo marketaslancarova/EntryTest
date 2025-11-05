@@ -29,19 +29,27 @@ app.get("/tiles", async (req, res) => {
 app.put("/tiles", async (req, res) => {
   const newTile = req.body.tile;
 
-  if (!newTile || !newTile.id || !newTile.text) {
+  if (!newTile || !newTile.text || !newTile.bg || newTile.link === undefined) {
     return res.status(400).json({ message: "Invalid tile data" });
   }
 
   const fileContent = await fs.readFile("./data/tiles.json");
   const tiles = JSON.parse(fileContent);
-  const alreadyExists = tiles.some((tile) => tile.id === newTile.id);
-  let updatedTiles = tiles;
 
-  if (!alreadyExists) {
-    updatedTiles = [...tiles, newTile];
-    await fs.writeFile("./data/tiles.json", JSON.stringify(updatedTiles));
+  // Determine new id = max(id) + 1
+  let newId = 1;
+  if (tiles.length > 0) {
+    const lastId = Math.max(...tiles.map((tile) => Number(tile.id) || 0));
+    newId = lastId + 1;
   }
+
+  newTile.id = newId.toString();
+
+  const updatedTiles = [...tiles, newTile];
+  await fs.writeFile(
+    "./data/tiles.json",
+    JSON.stringify(updatedTiles, null, 2)
+  );
 
   res.status(200).json({ tiles: updatedTiles });
 });
