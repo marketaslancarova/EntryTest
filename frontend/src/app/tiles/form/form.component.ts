@@ -6,7 +6,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
   selector: 'app-form',
   imports: [ReactiveFormsModule],
   templateUrl: './form.component.html',
-  styleUrl: './form.component.scss',
+  styleUrl: './form.component.css',
 })
 export class FormComponent {
   addTile = output<Tile>();

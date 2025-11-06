@@ -1,15 +1,21 @@
-<h2>Tiles</h2>
-<app-form (addTile)="onAddTile($event)" />
-@if (isFetching()) {
-<p>🔄 Načítám data...</p>
-} @if (error()) {
-<p class="error">⚠️ {{ error() }}</p>
-} @if (tiles().length > 0) {
+<!-- STAVY NAČÍTÁNÍ / CHYBY -->
+<div class="container">
+  @if (isFetching()) {
+  <p>🔄 Načítám data...</p>
+  } @if (error()) {
+  <p class="error">⚠️ {{ error() }}</p>
+  }
 
-<div class="tiles-grid">
-  @for (tile of tiles(); track tile.id) {
-  <app-tile [tile]="tile" (delete)="onDelete(tile)" /> }
+  <!-- GRID DLAŽDIC -->
+  @if (!isFetching() && !error() && tiles().length > 0) {
+  <div class="row g-3 hero-tiles">
+    @for (tile of tiles(); track tile.id) {
+    <div class="col-12 col-md-6 col-lg-4">
+      <app-tile [tile]="tile" (delete)="onDelete(tile)" />
+    </div>
+    }
+  </div>
+  } @else if (!isFetching() && !error()) {
+  <p class="text-center text-muted">Žádné dlaždice zatím nejsou.</p>
+  }
 </div>
-} @else {
-<p>Žádné dlaždice zatím nejsou.</p>
-}

@@ -1,9 +1,24 @@
-<h1>{{ title() }}</h1>
+<main class="d-flex justify-content-center align-items-start min-vh-100" style="margin-top: 10vh">
+  <div class="w-100" style="max-width: 980px">
+    <div class="text-center mb-5">
+      <div class="hero-extra-text text-uppercase mb-2">Extra Text</div>
+      <h1 class="hero-title mb-0">Get Inspired</h1>
+    </div>
 
-<button (click)="toggleTilesSection()">
-  {{ showTilesSection() ? 'Hide tiles' : 'Show tiles' }}
-</button>
+    @if (showTilesSection()) {
+    <app-tiles />
+    <app-form (close)="toggleTilesSection()" />
+    }
 
-@if (showTilesSection()) {
-<app-tiles />
-}
+    <!-- tlačítko pod dlaždicemi -->
+    <div class="d-flex justify-content-center mt-4">
+      <button
+        type="button"
+        (click)="toggleTilesSection()"
+        class="btn d-flex align-items-center justify-content-center mask-btn"
+      >
+        <i class="bi bi-gear-fill"></i>
+      </button>
+    </div>
+  </div>
+</main>

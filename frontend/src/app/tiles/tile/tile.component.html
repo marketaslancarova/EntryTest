@@ -1,6 +1,10 @@
-<div class="tile" [style.background]="tile().bg">
-  <h3>{{ tile().text }}</h3>
-  <a [href]="tile().link" target="_blank">{{ tile().link }}</a>
+<div
+  class="text-white text-center border-0 shadow-sm bg-gradient d-flex align-items-center justify-content-center ratio ratio-1x1"
+  [style.background]="tile().bg"
+>
+  <div class="d-flex flex-column align-items-center justify-content-center">
+    <h3 class="fw-semibold mb-2">{{ tile().text }}</h3>
 
-  <button (click)="onDeleteClick()">🗑️</button>
+    <button type="button" (click)="onDeleteClick()" class="btn btn-outline-light btn-sm">🗑️</button>
+  </div>
 </div>

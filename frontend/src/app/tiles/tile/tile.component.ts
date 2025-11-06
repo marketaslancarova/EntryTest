@@ -5,7 +5,7 @@ import { Tile } from '../tile.model';
   selector: 'app-tile',
   imports: [],
   templateUrl: './tile.component.html',
-  styleUrl: './tile.component.scss',
+  styleUrl: './tile.component.css',
 })
 export class TileComponent {
   tile = input.required<Tile>();

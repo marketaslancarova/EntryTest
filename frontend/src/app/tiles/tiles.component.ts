@@ -8,7 +8,7 @@ import { FormComponent } from './form/form.component';
   selector: 'app-tiles',
   imports: [TileComponent, FormComponent],
   templateUrl: './tiles.component.html',
-  styleUrl: './tiles.component.scss',
+  styleUrl: './tiles.component.css',
 })
 export class TilesComponent implements OnInit {
   private service = inject(TilesService);
