@@ -6,7 +6,7 @@ import { FormComponent } from './form/form.component';
 
 @Component({
   selector: 'app-tiles',
-  imports: [TileComponent, FormComponent],
+  imports: [TileComponent],
   templateUrl: './tiles.component.html',
   styleUrl: './tiles.component.css',
 })
