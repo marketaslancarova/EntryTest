@@ -10,9 +10,25 @@ import { FormComponent } from './tiles/form/form.component';
 })
 export class App {
   protected readonly title = signal('frontend');
-  showTilesSection = signal(false);
+  // Jestli už proběhl první klik
+  initialized = signal(false);
 
-  toggleTilesSection() {
-    this.showTilesSection.update((prevState) => !prevState);
+  // Jestli je otevřený formulář (modal)
+  formOpen = signal(false);
+
+  onGearClick() {
+    // PRVNÍ klik – jen zobrazí obsah (title + subtitle + tiles),
+    // formulář zatím NEotvíráme
+    if (!this.initialized()) {
+      this.initialized.set(true);
+      return;
+    }
+
+    // Další kliky – už jen toggle formuláře
+    this.formOpen.update((open) => !open);
+  }
+
+  onFormClose() {
+    this.formOpen.set(false);
   }
 }

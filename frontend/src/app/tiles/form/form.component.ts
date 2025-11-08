@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
+import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 type DisplayOption = '3 tiles' | '4 tiles' | '5 tiles';
 
 interface Tile {
@@ -14,7 +14,7 @@ interface Tile {
 @Component({
   selector: 'app-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, DragDropModule],
   templateUrl: './form.component.html',
   styleUrls: ['./form.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -23,6 +23,7 @@ export class FormComponent {
   private readonly fb = inject(NonNullableFormBuilder);
 
   readonly displayOptions: DisplayOption[] = ['3 tiles', '4 tiles', '5 tiles'];
+  closed = output<void>();
 
   // levý panel – nastavení
   readonly settingsForm = this.fb.group({
@@ -85,6 +86,14 @@ export class FormComponent {
     },
   ]);
 
+  onDropTile(event: CdkDragDrop<Tile[]>): void {
+    if (event.previousIndex === event.currentIndex) return;
+
+    const arr = [...this.tiles()];
+    moveItemInArray(arr, event.previousIndex, event.currentIndex);
+    this.tiles.set(arr); // nebo this.tiles.update(() => arr);
+  }
+
   // submit levého panelu (nastavení)
   onUpdateSettings(): void {
     if (this.settingsForm.invalid) {
@@ -126,7 +135,6 @@ export class FormComponent {
   }
 
   onClose(): void {
-    // zavření modalu / panelu – doplň si svojí logiku / output()
-    console.log('Close clicked');
+    this.closed.emit();
   }
 }

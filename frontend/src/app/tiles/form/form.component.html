@@ -159,122 +159,135 @@
             </div>
           </div>
 
-          <!-- 1. řádek – form -->
-          <div class="tiles-row d-flex align-items-center px-4 py-2">
-            <button type="button" class="btn btn-link p-0 me-3 tiles-drag-btn" aria-label="Reorder">
-              <i class="bi bi-list"></i>
-            </button>
-
-            <div class="d-flex align-items-center me-3 tiles-col-bg">
-              <span
-                class="tiles-bg-preview"
-                [style.backgroundColor]="tileForm.get('bg')?.value || '#3366ff'"
-              ></span>
-
+          <!-- OSTATNÍ ŘÁDKY – generované z tiles(), draggable -->
+          <div cdkDropList (cdkDropListDropped)="onDropTile($event)">
+            <!-- 1. řádek – form JE taky cdkDrag -->
+            <div class="tiles-row d-flex align-items-center px-4 py-2" cdkDrag>
               <button
                 type="button"
-                class="btn btn-link p-0 ms-1 tiles-bg-dropdown"
-                aria-label="Change background color"
+                class="btn btn-link p-0 me-3 tiles-drag-btn"
+                aria-label="Reorder"
+                cdkDragHandle
               >
-                <i class="bi bi-caret-down-fill"></i>
+                <i class="bi bi-list"></i>
               </button>
+
+              <div class="d-flex align-items-center me-3 tiles-col-bg">
+                <span
+                  class="tiles-bg-preview"
+                  [style.backgroundColor]="tileForm.get('bg')?.value || '#3366ff'"
+                ></span>
+
+                <button
+                  type="button"
+                  class="btn btn-link p-0 ms-1 tiles-bg-dropdown"
+                  aria-label="Change background color"
+                >
+                  <i class="bi bi-caret-down-fill"></i>
+                </button>
+              </div>
+
+              <div class="flex-grow-1 tiles-col-text">
+                <input
+                  type="text"
+                  formControlName="text"
+                  placeholder="Styles"
+                  class="form-control form-control-sm tiles-input tiles-input--table"
+                />
+              </div>
+
+              <div class="flex-grow-1 ms-3 tiles-col-link">
+                <input
+                  type="url"
+                  formControlName="link"
+                  placeholder="www.brandmaster.com"
+                  class="form-control form-control-sm tiles-input tiles-input--table"
+                />
+              </div>
+
+              <div class="d-flex align-items-center ms-3 tiles-col-actions">
+                <button
+                  type="button"
+                  class="btn btn-link p-0 me-2 tiles-icon-btn"
+                  (click)="tileForm.reset({ bg: '#3366ff', text: '', link: '' })"
+                  aria-label="Clear form"
+                >
+                  <i class="bi bi-trash"></i>
+                </button>
+
+                <button
+                  type="button"
+                  class="btn btn-link p-0 tiles-icon-btn"
+                  aria-label="More actions"
+                >
+                  <i class="bi bi-three-dots-vertical"></i>
+                </button>
+              </div>
             </div>
 
-            <div class="flex-grow-1 tiles-col-text">
-              <input
-                type="text"
-                formControlName="text"
-                placeholder="Styles"
-                class="form-control form-control-sm tiles-input tiles-input--table"
-              />
-            </div>
-
-            <div class="flex-grow-1 ms-3 tiles-col-link">
-              <input
-                type="url"
-                formControlName="link"
-                placeholder="www.brandmaster.com"
-                class="form-control form-control-sm tiles-input tiles-input--table"
-              />
-            </div>
-
-            <div class="d-flex align-items-center ms-3 tiles-col-actions">
+            <!-- OSTATNÍ ŘÁDKY – generované z tiles(), taky cdkDrag -->
+            @for (tile of tiles(); track tile.id) {
+            <div class="tiles-row d-flex align-items-center px-4 py-2" cdkDrag>
               <button
                 type="button"
-                class="btn btn-link p-0 me-2 tiles-icon-btn"
-                (click)="tileForm.reset({ bg: '#3366ff', text: '', link: '' })"
-                aria-label="Clear form"
+                class="btn btn-link p-0 me-3 tiles-drag-btn"
+                aria-label="Reorder"
+                cdkDragHandle
               >
-                <i class="bi bi-trash"></i>
+                <i class="bi bi-list"></i>
               </button>
 
-              <button
-                type="button"
-                class="btn btn-link p-0 tiles-icon-btn"
-                aria-label="More actions"
-              >
-                <i class="bi bi-three-dots-vertical"></i>
-              </button>
+              <div class="d-flex align-items-center me-3 tiles-col-bg">
+                <span class="tiles-bg-preview" [style.backgroundColor]="tile.bg"></span>
+
+                <button
+                  type="button"
+                  class="btn btn-link p-0 ms-1 tiles-bg-dropdown"
+                  aria-label="Change background color"
+                >
+                  <i class="bi bi-caret-down-fill"></i>
+                </button>
+              </div>
+
+              <div class="flex-grow-1 tiles-col-text">
+                <input
+                  type="text"
+                  class="form-control form-control-sm tiles-input tiles-input--table"
+                  [value]="tile.text"
+                  readonly
+                />
+              </div>
+
+              <div class="flex-grow-1 ms-3 tiles-col-link">
+                <input
+                  type="text"
+                  class="form-control form-control-sm tiles-input tiles-input--table"
+                  [value]="tile.link"
+                  readonly
+                />
+              </div>
+
+              <div class="d-flex align-items-center ms-3 tiles-col-actions">
+                <button
+                  type="button"
+                  class="btn btn-link p-0 me-2 tiles-icon-btn"
+                  (click)="onDeleteTile(tile.id)"
+                  aria-label="Delete tile"
+                >
+                  <i class="bi bi-trash"></i>
+                </button>
+
+                <button
+                  type="button"
+                  class="btn btn-link p-0 tiles-icon-btn"
+                  aria-label="More actions"
+                >
+                  <i class="bi bi-three-dots-vertical"></i>
+                </button>
+              </div>
             </div>
+            }
           </div>
-
-          <!-- OSTATNÍ ŘÁDKY – generované z tiles() -->
-          @for (tile of tiles(); track tile.id) {
-          <div class="tiles-row d-flex align-items-center px-4 py-2">
-            <button type="button" class="btn btn-link p-0 me-3 tiles-drag-btn" aria-label="Reorder">
-              <i class="bi bi-list"></i>
-            </button>
-
-            <div class="d-flex align-items-center me-3 tiles-col-bg">
-              <span class="tiles-bg-preview" [style.backgroundColor]="tile.bg"></span>
-
-              <button
-                type="button"
-                class="btn btn-link p-0 ms-1 tiles-bg-dropdown"
-                aria-label="Change background color"
-              >
-                <i class="bi bi-caret-down-fill"></i>
-              </button>
-            </div>
-
-            <div class="flex-grow-1 tiles-col-text">
-              <input
-                type="text"
-                class="form-control form-control-sm tiles-input tiles-input--table"
-                [value]="tile.text"
-                readonly
-              />
-            </div>
-
-            <div class="flex-grow-1 ms-3 tiles-col-link">
-              <input
-                type="text"
-                class="form-control form-control-sm tiles-input tiles-input--table"
-                [value]="tile.link"
-                readonly
-              />
-            </div>
-
-            <div class="d-flex align-items-center ms-3 tiles-col-actions">
-              <button
-                type="button"
-                class="btn btn-link p-0 me-2 tiles-icon-btn"
-                (click)="onDeleteTile(tile.id)"
-                aria-label="Delete tile"
-              >
-                <i class="bi bi-trash"></i>
-              </button>
-
-              <button
-                type="button"
-                class="btn btn-link p-0 tiles-icon-btn"
-                aria-label="More actions"
-              >
-                <i class="bi bi-three-dots-vertical"></i>
-              </button>
-            </div>
-          </div>
-          }
         </div>
       </form>
     </div>

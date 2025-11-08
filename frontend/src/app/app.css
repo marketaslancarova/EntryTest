@@ -1,8 +1,9 @@
+/* === GEAR BUTTON === */
 .mask-btn {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background-color: #2f3748;
+  background-color: #2f3748; /* 🟣 tvoje původní barva */
   color: #fff;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
   cursor: pointer;
@@ -21,4 +22,26 @@
 
 .mask-btn i {
   font-size: 2rem;
+}
+
+/* === FIXED STYL PO PRVNÍM KLIKU === */
+.fixed-gear {
+  position: fixed;
+  left: 50%;
+  bottom: 4vh; /* pár centimetrů od spodku */
+  transform: translateX(-50%);
+  z-index: 1100;
+  transition: bottom 0.4s ease, transform 0.3s ease;
+}
+
+/* === MODAL / OVERLAY === */
+.tiles-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 10vh;
+  z-index: 1050;
 }

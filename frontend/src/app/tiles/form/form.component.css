@@ -423,3 +423,20 @@
 .tiles-icon-btn:hover {
   color: #9aa3b8;
 }
+
+.cdk-drag-preview {
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.15);
+  border-radius: 4px;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.tiles-drag-btn {
+  cursor: grab;
+}
+
+.tiles-drag-btn:active {
+  cursor: grabbing;
+}

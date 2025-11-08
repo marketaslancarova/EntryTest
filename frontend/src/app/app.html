@@ -1,24 +1,47 @@
-<main class="d-flex justify-content-center align-items-start min-vh-100" style="margin-top: 10vh">
-  <div class="w-100" style="max-width: 980px">
+<main class="d-flex justify-content-center align-items-start min-vh-100">
+  <!-- STAV 1: PŘED PRVNÍM KLIKEM – jen tlačítko uprostřed -->
+  @if (!initialized()) {
+  <div class="w-100 d-flex justify-content-center align-items-center min-vh-100">
+    <button
+      type="button"
+      (click)="onGearClick()"
+      class="btn d-flex align-items-center justify-content-center mask-btn"
+    >
+      <i class="bi bi-gear-fill"></i>
+    </button>
+  </div>
+  }
+
+  <!-- STAV 2+: PO PRVNÍM KLIKU – zobrazí se hlavička, tiles a tlačítko pod nimi -->
+  @if (initialized()) {
+  <div class="w-100" style="max-width: 980px; margin-top: 10vh">
     <div class="text-center mb-5">
       <div class="hero-extra-text text-uppercase mb-2">Extra Text</div>
-      <h1 class="hero-title mb-0">Get Inspired</h1>
+      <h1 class="hero-title mb-1">Get Inspired</h1>
     </div>
 
-    @if (showTilesSection()) {
     <app-tiles />
-    <app-form />
-    }
 
     <!-- tlačítko pod dlaždicemi -->
-    <div class="d-flex justify-content-center mt-4">
+
+    <div class="d-flex justify-content-center" [class.fixed-gear]="initialized()">
       <button
         type="button"
-        (click)="toggleTilesSection()"
+        (click)="onGearClick()"
         class="btn d-flex align-items-center justify-content-center mask-btn"
       >
         <i class="bi bi-gear-fill"></i>
       </button>
     </div>
   </div>
+  }
+
+  <!-- MODAL – formulář nad obsahem, jen když formOpen() === true -->
+  @if (formOpen()) {
+  <div class="tiles-overlay" (click)="onFormClose()">
+    <div class="tiles-modal" (click)="$event.stopPropagation()">
+      <app-form (closed)="onFormClose()" />
+    </div>
+  </div>
+  }
 </main>
