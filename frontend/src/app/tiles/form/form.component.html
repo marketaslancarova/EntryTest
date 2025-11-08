@@ -3,7 +3,7 @@
     <!-- LEVÁ STRANA -->
     <div class="col-12 col-md-4 tiles-left border-end">
       <div class="tiles-left-inner d-flex flex-column h-100">
-        <!-- horní proužek s TILES + General -->
+        <!-- HEADER: Tiles + General -->
         <div class="tiles-left-header px-4 pt-3 pb-0">
           <div class="d-flex align-items-center gap-2 mb-2 text-uppercase small text-muted">
             <span class="tiles-icon-grid">
@@ -20,78 +20,103 @@
           </div>
         </div>
 
-        <!-- SCROLLUJÍCÍ TĚLO -->
-        <div class="tiles-left-body px-4 py-3">
-          <!-- Display -->
-          <div class="mb-3 flex-column align-items-start">
-            <label class="form-label tiles-label text-muted mb-1 w-100">Display</label>
-            <div class="tiles-select-wrapper position-relative">
-              <span class="tiles-icon-grid tiles-select-icon">
-                <span class="tiles-icon-square tiles-icon-square-primary"></span>
-                <span class="tiles-icon-square"></span>
-                <span class="tiles-icon-square"></span>
-                <span class="tiles-icon-square"></span>
-              </span>
-              <select class="form-select form-select-sm tiles-select">
-                <option selected>3 tiles</option>
-                <option>4 tiles</option>
-                <option>5 tiles</option>
-              </select>
+        <!-- LEVÝ FORM – nastavení -->
+        <form
+          class="d-flex flex-column flex-grow-1"
+          [formGroup]="settingsForm"
+          (ngSubmit)="onUpdateSettings()"
+        >
+          <!-- SCROLLUJÍCÍ TĚLO -->
+          <div class="tiles-left-body px-4 py-3">
+            <!-- Display -->
+            <div class="mb-3 flex-column align-items-start">
+              <label class="form-label tiles-label text-muted mb-1 w-100">Display</label>
+
+              <div class="tiles-select-wrapper position-relative">
+                <span class="tiles-icon-grid tiles-select-icon">
+                  <span class="tiles-icon-square tiles-icon-square-primary"></span>
+                  <span class="tiles-icon-square"></span>
+                  <span class="tiles-icon-square"></span>
+                  <span class="tiles-icon-square"></span>
+                </span>
+
+                <select class="form-select form-select-sm tiles-select" formControlName="display">
+                  @for (option of displayOptions; track option) {
+                  <option [value]="option">
+                    {{ option }}
+                  </option>
+                  }
+                </select>
+              </div>
             </div>
-          </div>
 
-          <hr class="tiles-divider" />
+            <hr class="tiles-divider" />
 
-          <!-- TEXT sekce -->
-          <div class="tiles-text-section mt-4">
-            <div class="tiles-text-heading text-uppercase">Text</div>
+            <!-- TEXT sekce -->
+            <div class="tiles-text-section mt-4">
+              <div class="tiles-section-title text-uppercase">Text</div>
 
-            <div class="d-flex align-items-center justify-content-between mb-3">
-              <label class="tiles-text-label mb-0">Title</label>
-              <input type="text" class="form-control tiles-input-field" value="Value" />
+              @for (field of textFields; track field.controlName) {
+              <div class="tiles-text-row d-flex align-items-center justify-content-between mb-3">
+                <label class="tiles-text-label mb-0">
+                  {{ field.label }}
+                </label>
+
+                <input
+                  type="text"
+                  class="form-control tiles-input tiles-input--sidebar"
+                  [formControlName]="field.controlName"
+                />
+              </div>
+              }
             </div>
 
-            <div class="d-flex align-items-center justify-content-between mb-3">
-              <label class="tiles-text-label mb-0">Subtitle</label>
-              <input type="text" class="form-control tiles-input-field" value="Value" />
-            </div>
-          </div>
+            <hr class="tiles-divider" />
 
-          <hr class="tiles-divider" />
+            <!-- OTHER sekce -->
+            <div class="tiles-other-section mt-4">
+              <div class="tiles-section-heading text-uppercase">Other</div>
 
-          <!-- OTHER sekce -->
-          <div class="tiles-other-section mt-4">
-            <!-- nadpis OTHER, jen text, žádný box -->
-            <div class="tiles-section-heading text-uppercase">Other</div>
+              <div class="tiles-other-box rounded-3 p-3 mb-3">
+                <!-- Load all -->
+                <div
+                  class="tiles-other-box-header d-flex justify-content-between align-items-center mb-3"
+                >
+                  <span class="tiles-other-label-muted">Load all</span>
 
-            <!-- vlastní box -->
-            <div class="tiles-other-box rounded-3 p-3 mb-3">
-              <!-- řádek Load all -->
-              <div
-                class="d-flex justify-content-between align-items-center mb-3"
-                styles="background-color: #000!important"
-              >
-                <span class="tiles-other-label-muted">Load all</span>
-                <div class="form-check form-switch m-0 tiles-switch">
-                  <input class="form-check-input" type="checkbox" checked />
+                  <div class="form-check form-switch m-0 tiles-switch">
+                    <input class="form-check-input" type="checkbox" formControlName="loadAll" />
+                  </div>
+                </div>
+
+                <!-- Tiles visible -->
+                <div class="d-flex justify-content-between align-items-center">
+                  <label class="tiles-text-label mb-0">Tiles visible</label>
+
+                  <input
+                    type="number"
+                    class="form-control tiles-input tiles-input--number"
+                    formControlName="tilesVisible"
+                    min="1"
+                  />
                 </div>
               </div>
-
-              <!-- řádek Tiles visible -->
-              <div class="d-flex justify-content-between align-items-center">
-                <label class="tiles-text-label mb-0">Tiles visible</label>
-                <input type="number" class="form-control tiles-visible-input" value="20" min="1" />
-              </div>
             </div>
+
+            <div class="tiles-left-bottom-spacer"></div>
           </div>
 
-          <div style="height: 70px"></div>
-        </div>
-
-        <!-- spodní Update -->
-        <div class="tiles-left-footer px-4 py-3 border-top">
-          <button type="button" class="btn btn-primary w-100 tiles-update-btn">Update</button>
-        </div>
+          <!-- spodní Update -->
+          <div class="tiles-left-footer px-4 py-3 border-top">
+            <button
+              type="submit"
+              class="btn btn-primary w-100 tiles-update-btn"
+              [disabled]="settingsForm.invalid"
+            >
+              Update
+            </button>
+          </div>
+        </form>
       </div>
     </div>
 
@@ -99,16 +124,22 @@
     <div class="col-12 col-md-8 tiles-right p-4">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h6 class="tiles-right-title mb-1">Tiles</h6>
-        <button type="button" class="tiles-close-plain" (click)="onClose()">
+
+        <button type="button" class="tiles-close-plain" (click)="onClose()" aria-label="Close">
           <i class="bi bi-x-lg"></i>
         </button>
       </div>
 
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <!-- PRAVÝ FORM – nový tile + seznam -->
+      <form [formGroup]="tileForm" (ngSubmit)="onSubmitTile()">
         <div class="tiles-panel rounded-3 border shadow-sm bg-white p-0">
           <!-- horní lišta v kartě -->
           <div class="tiles-card-header d-flex align-items-center px-4 py-2">
-            <button type="button" class="btn btn-link p-0 me-3 tiles-sort-btn">
+            <button
+              type="button"
+              class="btn btn-link p-0 me-3 tiles-sort-btn"
+              aria-label="Sort tiles"
+            >
               <i class="bi bi-arrow-down-up"></i>
             </button>
 
@@ -120,7 +151,7 @@
               <button
                 type="submit"
                 class="btn btn-sm d-flex align-items-center gap-1 tiles-add-btn"
-                [disabled]="form.invalid"
+                [disabled]="tileForm.invalid"
               >
                 <i class="bi bi-plus-lg"></i>
                 <span>Add</span>
@@ -130,16 +161,21 @@
 
           <!-- 1. řádek – form -->
           <div class="tiles-row d-flex align-items-center px-4 py-2">
-            <button type="button" class="btn btn-link p-0 me-3 tiles-drag-btn">
+            <button type="button" class="btn btn-link p-0 me-3 tiles-drag-btn" aria-label="Reorder">
               <i class="bi bi-list"></i>
             </button>
 
             <div class="d-flex align-items-center me-3 tiles-col-bg">
               <span
                 class="tiles-bg-preview"
-                [style.backgroundColor]="form.get('bg')?.value || '#3366ff'"
+                [style.backgroundColor]="tileForm.get('bg')?.value || '#3366ff'"
               ></span>
-              <button type="button" class="btn btn-link p-0 ms-1 tiles-bg-dropdown">
+
+              <button
+                type="button"
+                class="btn btn-link p-0 ms-1 tiles-bg-dropdown"
+                aria-label="Change background color"
+              >
                 <i class="bi bi-caret-down-fill"></i>
               </button>
             </div>
@@ -149,7 +185,7 @@
                 type="text"
                 formControlName="text"
                 placeholder="Styles"
-                class="form-control form-control-sm tiles-input"
+                class="form-control form-control-sm tiles-input tiles-input--table"
               />
             </div>
 
@@ -158,205 +194,87 @@
                 type="url"
                 formControlName="link"
                 placeholder="www.brandmaster.com"
-                class="form-control form-control-sm tiles-input"
+                class="form-control form-control-sm tiles-input tiles-input--table"
               />
             </div>
 
             <div class="d-flex align-items-center ms-3 tiles-col-actions">
-              <button type="button" class="btn btn-link p-0 me-2 tiles-icon-btn">
+              <button
+                type="button"
+                class="btn btn-link p-0 me-2 tiles-icon-btn"
+                (click)="tileForm.reset({ bg: '#3366ff', text: '', link: '' })"
+                aria-label="Clear form"
+              >
                 <i class="bi bi-trash"></i>
               </button>
-              <button type="button" class="btn btn-link p-0 tiles-icon-btn">
+
+              <button
+                type="button"
+                class="btn btn-link p-0 tiles-icon-btn"
+                aria-label="More actions"
+              >
                 <i class="bi bi-three-dots-vertical"></i>
               </button>
             </div>
           </div>
 
-          <!-- ostatní řádky – staticky kvůli 1:1 -->
-          <!-- Photos -->
+          <!-- OSTATNÍ ŘÁDKY – generované z tiles() -->
+          @for (tile of tiles(); track tile.id) {
           <div class="tiles-row d-flex align-items-center px-4 py-2">
-            <button type="button" class="btn btn-link p-0 me-3 tiles-drag-btn">
+            <button type="button" class="btn btn-link p-0 me-3 tiles-drag-btn" aria-label="Reorder">
               <i class="bi bi-list"></i>
             </button>
+
             <div class="d-flex align-items-center me-3 tiles-col-bg">
-              <span class="tiles-bg-preview"></span>
-              <button type="button" class="btn btn-link p-0 ms-1 tiles-bg-dropdown">
+              <span class="tiles-bg-preview" [style.backgroundColor]="tile.bg"></span>
+
+              <button
+                type="button"
+                class="btn btn-link p-0 ms-1 tiles-bg-dropdown"
+                aria-label="Change background color"
+              >
                 <i class="bi bi-caret-down-fill"></i>
               </button>
             </div>
-            <div class="flex-grow-1 tiles-col-text">
-              <input
-                type="text"
-                class="form-control form-control-sm tiles-input"
-                value="Photos"
-                readonly
-              />
-            </div>
-            <div class="flex-grow-1 ms-3 tiles-col-link">
-              <input
-                type="text"
-                class="form-control form-control-sm tiles-input"
-                value="www.brandmaster.com"
-                readonly
-              />
-            </div>
-            <div class="d-flex align-items-center ms-3 tiles-col-actions">
-              <button type="button" class="btn btn-link p-0 me-2 tiles-icon-btn">
-                <i class="bi bi-trash"></i>
-              </button>
-              <button type="button" class="btn btn-link p-0 tiles-icon-btn">
-                <i class="bi bi-three-dots-vertical"></i>
-              </button>
-            </div>
-          </div>
 
-          <!-- Typography -->
-          <div class="tiles-row d-flex align-items-center px-4 py-2">
-            <button type="button" class="btn btn-link p-0 me-3 tiles-drag-btn">
-              <i class="bi bi-list"></i>
-            </button>
-            <div class="d-flex align-items-center me-3 tiles-col-bg">
-              <span class="tiles-bg-preview"></span>
-              <button type="button" class="btn btn-link p-0 ms-1 tiles-bg-dropdown">
-                <i class="bi bi-caret-down-fill"></i>
-              </button>
-            </div>
             <div class="flex-grow-1 tiles-col-text">
               <input
                 type="text"
-                class="form-control form-control-sm tiles-input"
-                value="Typography"
+                class="form-control form-control-sm tiles-input tiles-input--table"
+                [value]="tile.text"
                 readonly
               />
             </div>
-            <div class="flex-grow-1 ms-3 tiles-col-link">
-              <input
-                type="text"
-                class="form-control form-control-sm tiles-input"
-                value="www.brandmaster.com"
-                readonly
-              />
-            </div>
-            <div class="d-flex align-items-center ms-3 tiles-col-actions">
-              <button type="button" class="btn btn-link p-0 me-2 tiles-icon-btn">
-                <i class="bi bi-trash"></i>
-              </button>
-              <button type="button" class="btn btn-link p-0 tiles-icon-btn">
-                <i class="bi bi-three-dots-vertical"></i>
-              </button>
-            </div>
-          </div>
 
-          <!-- Text -->
-          <div class="tiles-row d-flex align-items-center px-4 py-2">
-            <button type="button" class="btn btn-link p-0 me-3 tiles-drag-btn">
-              <i class="bi bi-list"></i>
-            </button>
-            <div class="d-flex align-items-center me-3 tiles-col-bg">
-              <span class="tiles-bg-preview"></span>
-              <button type="button" class="btn btn-link p-0 ms-1 tiles-bg-dropdown">
-                <i class="bi bi-caret-down-fill"></i>
-              </button>
-            </div>
-            <div class="flex-grow-1 tiles-col-text">
-              <input
-                type="text"
-                class="form-control form-control-sm tiles-input"
-                value="Text"
-                readonly
-              />
-            </div>
             <div class="flex-grow-1 ms-3 tiles-col-link">
               <input
                 type="text"
-                class="form-control form-control-sm tiles-input"
-                value="www.brandmaster.com"
+                class="form-control form-control-sm tiles-input tiles-input--table"
+                [value]="tile.link"
                 readonly
               />
             </div>
-            <div class="d-flex align-items-center ms-3 tiles-col-actions">
-              <button type="button" class="btn btn-link p-0 me-2 tiles-icon-btn">
-                <i class="bi bi-trash"></i>
-              </button>
-              <button type="button" class="btn btn-link p-0 tiles-icon-btn">
-                <i class="bi bi-three-dots-vertical"></i>
-              </button>
-            </div>
-          </div>
 
-          <!-- Icons -->
-          <div class="tiles-row d-flex align-items-center px-4 py-2">
-            <button type="button" class="btn btn-link p-0 me-3 tiles-drag-btn">
-              <i class="bi bi-list"></i>
-            </button>
-            <div class="d-flex align-items-center me-3 tiles-col-bg">
-              <span class="tiles-bg-preview"></span>
-              <button type="button" class="btn btn-link p-0 ms-1 tiles-bg-dropdown">
-                <i class="bi bi-caret-down-fill"></i>
-              </button>
-            </div>
-            <div class="flex-grow-1 tiles-col-text">
-              <input
-                type="text"
-                class="form-control form-control-sm tiles-input"
-                value="Icons"
-                readonly
-              />
-            </div>
-            <div class="flex-grow-1 ms-3 tiles-col-link">
-              <input
-                type="text"
-                class="form-control form-control-sm tiles-input"
-                value="Enter URL"
-                readonly
-              />
-            </div>
             <div class="d-flex align-items-center ms-3 tiles-col-actions">
-              <button type="button" class="btn btn-link p-0 me-2 tiles-icon-btn">
+              <button
+                type="button"
+                class="btn btn-link p-0 me-2 tiles-icon-btn"
+                (click)="onDeleteTile(tile.id)"
+                aria-label="Delete tile"
+              >
                 <i class="bi bi-trash"></i>
               </button>
-              <button type="button" class="btn btn-link p-0 tiles-icon-btn">
-                <i class="bi bi-three-dots-vertical"></i>
-              </button>
-            </div>
-          </div>
 
-          <!-- Videos -->
-          <div class="tiles-row d-flex align-items-center px-4 py-2">
-            <button type="button" class="btn btn-link p-0 me-3 tiles-drag-btn">
-              <i class="bi bi-list"></i>
-            </button>
-            <div class="d-flex align-items-center me-3 tiles-col-bg">
-              <span class="tiles-bg-preview"></span>
-              <button type="button" class="btn btn-link p-0 ms-1 tiles-bg-dropdown">
-                <i class="bi bi-caret-down-fill"></i>
-              </button>
-            </div>
-            <div class="flex-grow-1 tiles-col-text">
-              <input
-                type="text"
-                class="form-control form-control-sm tiles-input"
-                value="Videos"
-                readonly
-              />
-            </div>
-            <div class="flex-grow-1 ms-3 tiles-col-link">
-              <input
-                type="text"
-                class="form-control form-control-sm tiles-input"
-                value="Enter URL"
-                readonly
-              />
-            </div>
-            <div class="d-flex align-items-center ms-3 tiles-col-actions">
-              <button type="button" class="btn btn-link p-0 me-2 tiles-icon-btn">
-                <i class="bi bi-trash"></i>
-              </button>
-              <button type="button" class="btn btn-link p-0 tiles-icon-btn">
+              <button
+                type="button"
+                class="btn btn-link p-0 tiles-icon-btn"
+                aria-label="More actions"
+              >
                 <i class="bi bi-three-dots-vertical"></i>
               </button>
             </div>
           </div>
+          }
         </div>
       </form>
     </div>

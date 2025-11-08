@@ -1,6 +1,6 @@
-/* ---------------------- */
-/* CELÁ KARTA / LAYOUT    */
-/* ---------------------- */
+/* ====================================================== */
+/* CELÁ KARTA / LAYOUT */
+/* ====================================================== */
 
 .tiles-shell {
   max-width: 1150px;
@@ -9,34 +9,36 @@
   border: 1px solid #e2e7ee;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
   background-color: #ffffff;
-  height: 540px; /* pevná výška → scroll uvnitř vlevo */
+  height: 540px; /* pevná výška – scrolluje jen levý panel */
   overflow: hidden;
 }
 
-/* Levý panel */
 .tiles-left {
   background-color: #f9fafb;
 }
 
-/* Pravý panel */
 .tiles-right {
   background-color: #f3f4f6;
 }
 
-/* Scroll uvnitř levé části */
 .tiles-left-body {
   overflow-y: auto;
 }
 
-/* Spodní tlačítko vlevo */
+.tiles-left-bottom-spacer {
+  height: 70px;
+}
+
 .tiles-update-btn {
   background-color: #407cff;
   border-color: #407cff;
+  height: 3rem;
+  font-size: 12px;
 }
 
-/* ---------------------- */
-/* LEVÝ HEADER (TILES + GENERAL) */
-/* ---------------------- */
+/* ====================================================== */
+/* LEVÝ HEADER */
+/* ====================================================== */
 
 .tiles-left-header {
   background-color: #f9fafb;
@@ -46,7 +48,6 @@
 .tiles-general-tab {
   margin-top: 6px;
   position: relative;
-  padding-bottom: 0;
 }
 
 .tiles-general-label {
@@ -58,7 +59,6 @@
   color: #111827;
 }
 
-/* modrá linka pod "General" */
 .tiles-general-label::after {
   content: '';
   position: absolute;
@@ -70,9 +70,9 @@
   border-radius: 999px;
 }
 
-/* ---------------------- */
-/* IKONKY – 4 ČTVEREČKY   */
-/* ---------------------- */
+/* ====================================================== */
+/* IKONY – 4 ČTVEREČKY */
+/* ====================================================== */
 
 .tiles-icon-grid {
   display: grid;
@@ -109,9 +109,9 @@
   background: #407cff;
 }
 
-/* ---------------------- */
-/* LABELY / DIVIDERY      */
-/* ---------------------- */
+/* ====================================================== */
+/* LABELY / DIVIDERY */
+/* ====================================================== */
 
 .tiles-label {
   font-size: 12px;
@@ -123,12 +123,12 @@
 .tiles-divider {
   border: none;
   border-bottom: 2px solid #e0e2e4;
-  margin: 12px 0 8px 0;
+  margin: 12px 0 8px;
 }
 
-/* ---------------------- */
-/* DISPLAY SELECT S IKONOU */
-/* ---------------------- */
+/* ====================================================== */
+/* SELECT (Display) */
+/* ====================================================== */
 
 .tiles-select-wrapper {
   position: relative;
@@ -146,8 +146,8 @@
 .tiles-select {
   width: 130px;
   height: 28px;
-  padding-left: 30px; /* místo pro ikonku vlevo */
-  padding-right: 24px; /* šipka vpravo */
+  padding-left: 30px;
+  padding-right: 24px;
   font-size: 13px;
   color: #374151;
   background-color: #fff;
@@ -161,20 +161,30 @@
   box-shadow: 0 0 0 2px #407cff33;
 }
 
-/* ---------------------- */
-/* TEXT SEKCE (Title / Subtitle) */
-/* ---------------------- */
+/* ====================================================== */
+/* TEXT A OTHER SEKCE */
+/* ====================================================== */
 
 .tiles-text-section {
   margin-top: 20px;
 }
 
-.tiles-text-heading {
+.tiles-section-title,
+.tiles-section-heading {
   font-size: 10px;
   font-weight: 400;
   letter-spacing: 0.06em;
   color: #9ca3af;
+  text-transform: uppercase;
+}
+
+.tiles-section-title {
   margin-bottom: 10px;
+}
+
+.tiles-section-heading {
+  margin-bottom: 8px;
+  background-color: #f9fafb;
 }
 
 .tiles-text-label {
@@ -184,33 +194,44 @@
   flex: 0 0 100px;
 }
 
-.tiles-input-field {
-  width: 180px;
+/* ====================================================== */
+/* OBECNÝ INPUT STYL */
+/* ====================================================== */
+
+.tiles-input {
   border: 1px solid #e2e7ee;
-  border-radius: 6px;
-  padding: 6px 10px;
+  border-radius: 4px;
   font-size: 12px;
-  color: #505661;
+  line-height: 1.4;
+  padding: 4px 8px; /* kompaktnější výška */
+  color: #374151;
   background-color: #ffffff;
 }
 
-.tiles-input-field:focus {
+.tiles-input:focus {
+  background-color: #ffffff;
   border-color: #407cff;
   box-shadow: none;
 }
 
-/* ---------------------- */
-/* OTHER SEKCE            */
-/* ---------------------- */
+/* varianty podle kontextu */
 
-.tiles-section-heading {
-  font-size: 10px;
-  font-weight: 400;
-  letter-spacing: 0.06em;
-  color: #9ca3af;
-  margin-bottom: 8px;
-  background-color: #f9fafb;
+.tiles-input--sidebar {
+  width: 180px;
 }
+
+.tiles-input--number {
+  width: 72px;
+  text-align: right;
+}
+
+.tiles-input--table {
+  width: 100%;
+}
+
+/* ====================================================== */
+/* OTHER BOX */
+/* ====================================================== */
 
 .tiles-other-box {
   background-color: #ffffff;
@@ -219,40 +240,26 @@
   padding: 14px 16px;
 }
 
-.tiles-other-box > div:first-child {
+.tiles-other-box-header {
   background-color: #f9fafb;
-  margin: -10px -10px; /* vytáhne se do krajů přes padding boxu */
+  margin: -10px -10px;
   padding: 10px 16px;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
 }
 
-.tiles-other-label {
+.tiles-other-label,
+.tiles-other-label-muted {
   font-size: 12px;
   font-weight: 400;
+}
+
+.tiles-other-label {
   color: #374151;
 }
 
 .tiles-other-label-muted {
-  font-size: 12px;
-  font-weight: 400;
   color: #6b7280;
-}
-
-.tiles-visible-input {
-  width: 72px;
-  height: 32px;
-  border-radius: 6px;
-  border: 1px solid #e2e7ee;
-  padding: 4px 8px;
-  font-size: 12px;
-  color: #111827;
-  background-color: #ffffff;
-}
-
-.tiles-visible-input:focus {
-  border-color: #407cff;
-  box-shadow: none;
 }
 
 .tiles-switch .form-check-input {
@@ -261,9 +268,14 @@
   cursor: pointer;
 }
 
-/* ---------------------- */
-/* PRAVÝ HEADER (Tiles + X) */
-/* ---------------------- */
+.form-check-input:checked {
+  background-color: #407cff;
+  border-color: #407cff;
+}
+
+/* ====================================================== */
+/* PRAVÝ HEADER */
+/* ====================================================== */
 
 .tiles-right-title {
   font-size: 14px;
@@ -271,7 +283,6 @@
   color: #4b5563;
 }
 
-/* křížek vpravo nahoře, bez kolečka */
 .tiles-close-plain {
   border: none;
   background: transparent;
@@ -294,20 +305,24 @@
   color: #6e7787;
 }
 
-/* ---------------------- */
-/* PRAVÁ KARTA (tabulka)  */
-/* ---------------------- */
+/* ====================================================== */
+/* TABULKA (PRAVÁ ČÁST) */
+/* ====================================================== */
 
 .tiles-panel {
   border-color: #e2e7ee !important;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06) !important;
 }
 
-/* header BG / TEXT / LINK */
+/* ---------------------- */
+/* HLAVIČKA TABULKY */
+/* ---------------------- */
+
 .tiles-card-header {
   background-color: #f5f7fb;
   border-bottom: 1px solid #e2e7ee;
-  font-size: 11px;
+  font-size: 10px; /* menší font */
+  font-weight: 600; /* trochu tlustší */
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #9ca3af;
@@ -331,7 +346,6 @@
   text-align: left;
 }
 
-/* Add tlačítko */
 .tiles-add-btn {
   background-color: #407cff;
   border-color: #407cff;
@@ -348,9 +362,14 @@
   opacity: 0.6;
 }
 
-/* Řádky */
+/* ---------------------- */
+/* ŘÁDKY TABULKY */
+/* ---------------------- */
+
 .tiles-row {
   border-bottom: 1px solid #f0f2f7;
+  padding-top: 6px;
+  padding-bottom: 6px; /* kompaktnější */
 }
 
 .tiles-row:last-child {
@@ -358,6 +377,7 @@
 }
 
 /* Drag ikona */
+
 .tiles-drag-btn {
   color: #c0c6d4;
   font-size: 16px;
@@ -367,7 +387,8 @@
   color: #9aa3b8;
 }
 
-/* BG sloupec v tabulce */
+/* BG sloupec */
+
 .tiles-col-bg {
   width: 80px;
 }
@@ -388,24 +409,8 @@
   color: #9aa3b8;
 }
 
-/* Inputs v tabulce */
-.tiles-input {
-  background-color: #ffffff;
-  border-color: #e2e7ee;
-  border-radius: 4px;
-  padding-top: 6px;
-  padding-bottom: 6px;
-  font-size: 14px;
-  color: #374151;
-}
+/* Akční ikony */
 
-.tiles-input:focus {
-  background-color: #ffffff;
-  border-color: #407cff;
-  box-shadow: none;
-}
-
-/* Akční ikony vpravo */
 .tiles-col-actions {
   width: 60px;
 }
@@ -417,15 +422,4 @@
 
 .tiles-icon-btn:hover {
   color: #9aa3b8;
-}
-
-/* Globální switch (pokud není přepsán tiles-switch) */
-.form-check-input:checked {
-  background-color: #407cff;
-  border-color: #407cff;
-}
-
-.tiles-update-btn {
-  height: 3rem;
-  font-size: 12px;
 }
