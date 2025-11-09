@@ -41,7 +41,6 @@ export class TilesComponent implements OnInit {
     const sub = this.service.deleteTile(tile.id).subscribe({
       error: (err) => this.error.set(err.message),
     });
-    console.log(tile);
 
     this.destroyRef.onDestroy(() => sub.unsubscribe());
   }

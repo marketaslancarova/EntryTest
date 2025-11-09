@@ -1,16 +1,26 @@
-/* zajistí, že obrázek/gradient se pěkně roztáhne */
-.tile .ratio {
+.tile.ratio {
   background-size: cover;
   background-position: center;
 }
 
-/* jemný darken efekt na hover – jako u návrhu */
-.tile .ratio:hover {
+.tile:hover {
   filter: brightness(0.9);
 }
 
-/* text uprostřed */
 .tile-title {
   font-size: 1rem;
   letter-spacing: 0.03em;
+}
+
+.tile {
+  display: block;
+  cursor: pointer;
+  outline: none;
+}
+
+.tile:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.9);
+  outline-offset: 3px;
+  border-radius: 0.75rem;
+  filter: brightness(0.95);
 }

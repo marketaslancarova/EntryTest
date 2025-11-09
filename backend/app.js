@@ -17,59 +17,70 @@ app.use((req, res, next) => {
   next();
 });
 
+// GET /tiles – načte pole tile objektů z ./data/tiles.json
 app.get("/tiles", async (req, res) => {
-  // Simulate delay
-  // await new Promise((resolve) => setTimeout(resolve, 3000));
-
-  const fileContent = await fs.readFile("./data/tiles.json");
-  const tilesData = JSON.parse(fileContent);
-  res.status(200).json({ tiles: tilesData });
+  try {
+    const fileContent = await fs.readFile("./data/tiles.json", "utf-8");
+    const tilesData = JSON.parse(fileContent); // očekává se, že je to Array
+    res.status(200).json({ tiles: tilesData });
+  } catch (err) {
+    console.error("Chyba při čtení tiles.json:", err);
+    res.status(500).json({ message: "Chyba při čtení tiles" });
+  }
 });
 
+// PUT /tiles – očekává { tiles: Tile[] } a celé to uloží do ./data/tiles.json
 app.put("/tiles", async (req, res) => {
-  const newTile = req.body.tile;
-  console.log("BODY:", req.body);
+  try {
+    const { tiles } = req.body;
 
-  if (!newTile || !newTile.text || !newTile.bg || newTile.link === undefined) {
-    return res.status(400).json({ message: "Invalid tile data" });
+    if (!Array.isArray(tiles)) {
+      return res.status(400).json({ error: "Missing tiles array" });
+    }
+
+    // případně validace / doplnění id
+    const cleanedTiles = tiles.map((t, index) => ({
+      id: t.id || `${Date.now()}-${index}`,
+      bg: t.bg || "#3366ff",
+      text: t.text ?? "",
+      link: t.link ?? "",
+    }));
+
+    // uložit do JSON souboru jako pole
+    await fs.writeFile(
+      "./data/tiles.json",
+      JSON.stringify(cleanedTiles, null, 2),
+      "utf-8"
+    );
+
+    console.log("✅ Uloženo:", cleanedTiles.length, "tiles");
+    res.status(200).json({ tiles: cleanedTiles });
+  } catch (err) {
+    console.error("Chyba při ukládání tiles:", err);
+    res.status(500).json({ message: "Chyba při ukládání tiles" });
   }
-
-  const fileContent = await fs.readFile("./data/tiles.json");
-  const tiles = JSON.parse(fileContent);
-
-  // Determine new id = max(id) + 1
-  let newId = 1;
-  if (tiles.length > 0) {
-    const lastId = Math.max(...tiles.map((tile) => Number(tile.id) || 0));
-    newId = lastId + 1;
-  }
-
-  newTile.id = newId.toString();
-
-  const updatedTiles = [...tiles, newTile];
-  await fs.writeFile(
-    "./data/tiles.json",
-    JSON.stringify(updatedTiles, null, 2)
-  );
-  console;
-  res.status(200).json({ tiles: updatedTiles });
 });
 
+// DELETE /tiles/:id – smaže tile z ./data/tiles.json
 app.delete("/tiles/:id", async (req, res) => {
-  const tileId = req.params.id;
+  try {
+    const tileId = req.params.id;
 
-  const tilesFileContent = await fs.readFile("./data/tiles.json");
-  const tilesData = JSON.parse(tilesFileContent);
-  const tileIndex = tilesData.findIndex((tile) => tile.id === tileId);
-  let updatedTilesData = tilesData;
+    const tilesFileContent = await fs.readFile("./data/tiles.json", "utf-8");
+    const tilesData = JSON.parse(tilesFileContent); // Array
+    const updatedTilesData = tilesData.filter((tile) => tile.id !== tileId);
 
-  if (tileIndex >= 0) {
-    updatedTilesData.splice(tileIndex, 1);
+    await fs.writeFile(
+      "./data/tiles.json",
+      JSON.stringify(updatedTilesData, null, 2),
+      "utf-8"
+    );
+
+    res.status(200).json({ tiles: updatedTilesData });
+  } catch (err) {
+    console.error("Chyba při mazání tile:", err);
+    res.status(500).json({ message: "Chyba při mazání tile" });
   }
-
-  await fs.writeFile("./data/tiles.json", JSON.stringify(updatedTilesData));
-
-  res.status(200).json({ tiles: updatedTilesData });
 });
 
 // 404

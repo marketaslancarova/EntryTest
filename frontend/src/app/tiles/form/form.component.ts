@@ -1,15 +1,20 @@
-import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnInit,
+  inject,
+  output,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
-type DisplayOption = '3 tiles' | '4 tiles' | '5 tiles';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
 
-interface Tile {
-  id: string;
-  text: string;
-  link: string;
-  bg: string;
-}
+import { TilesService } from '../tiles.service';
+import { Tile } from '../tile.model';
+
+type DisplayOption = '3 tiles' | '4 tiles' | '5 tiles';
 
 @Component({
   selector: 'app-form',
@@ -19,11 +24,19 @@ interface Tile {
   styleUrls: ['./form.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FormComponent {
+export class FormComponent implements OnInit {
   private readonly fb = inject(NonNullableFormBuilder);
+  private readonly service = inject(TilesService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly displayOptions: DisplayOption[] = ['3 tiles', '4 tiles', '5 tiles'];
   closed = output<void>();
+
+  // data ze servisu – readonly signal
+  readonly tiles = this.service.loadedTiles;
+
+  isFetching = signal(false);
+  error = signal('');
 
   // levý panel – nastavení
   readonly settingsForm = this.fb.group({
@@ -41,97 +54,94 @@ export class FormComponent {
     { label: 'Subtitle', controlName: 'subtitle' as const },
   ];
 
-  // pravý panel – formulář pro nový tile
+  // pravý panel – formulář pro nový tile (pro tlačítko Add)
   readonly tileForm = this.fb.group({
-    bg: this.fb.control('#3366ff', {
-      validators: [Validators.required],
-    }),
-    text: this.fb.control('', {
-      validators: [Validators.required],
-    }),
+    bg: this.fb.control('#3366ff'),
+    text: this.fb.control(''),
     link: this.fb.control(''),
   });
 
-  // existující tiles (ty "Photos / Typography / Text / Icons / Videos")
-  readonly tiles = signal<readonly Tile[]>([
-    {
-      id: 'photos',
-      text: 'Photos',
-      link: 'www.brandmaster.com',
-      bg: '#3366ff',
-    },
-    {
-      id: 'typography',
-      text: 'Typography',
-      link: 'www.brandmaster.com',
-      bg: '#3366ff',
-    },
-    {
-      id: 'text',
-      text: 'Text',
-      link: 'www.brandmaster.com',
-      bg: '#3366ff',
-    },
-    {
-      id: 'icons',
-      text: 'Icons',
-      link: 'Enter URL',
-      bg: '#3366ff',
-    },
-    {
-      id: 'videos',
-      text: 'Videos',
-      link: 'Enter URL',
-      bg: '#3366ff',
-    },
-  ]);
+  ngOnInit(): void {
+    this.isFetching.set(true);
 
-  onDropTile(event: CdkDragDrop<Tile[]>): void {
-    if (event.previousIndex === event.currentIndex) return;
+    const sub = this.service.loadTiles().subscribe({
+      error: (err) => {
+        this.error.set(err.message ?? 'Chyba při načítání tiles');
+        this.isFetching.set(false);
+      },
+      complete: () => {
+        this.isFetching.set(false);
+      },
+    });
 
-    const arr = [...this.tiles()];
-    moveItemInArray(arr, event.previousIndex, event.currentIndex);
-    this.tiles.set(arr); // nebo this.tiles.update(() => arr);
+    this.destroyRef.onDestroy(() => sub.unsubscribe());
   }
 
-  // submit levého panelu (nastavení)
+  // levý submit (settings) – uloží celé tiles na backend
   onUpdateSettings(): void {
-    if (this.settingsForm.invalid) {
-      return;
-    }
+    if (this.settingsForm.invalid) return;
 
-    const settings = this.settingsForm.getRawValue();
-    console.log('Settings updated', settings);
-    // tady by šlo volat API nebo emitnout ven přes output()
+    const tilesToSave = this.tiles();
+
+    const sub = this.service.updateAllTiles(tilesToSave).subscribe({
+      next: () => {
+        console.log('Settings updated', this.settingsForm.getRawValue());
+      },
+      error: (err) => {
+        this.error.set(err.message ?? 'Chyba při ukládání tiles');
+      },
+    });
+
+    this.destroyRef.onDestroy(() => sub.unsubscribe());
   }
 
-  // submit pravého panelu (přidání tile)
+  // pravý submit – klik na Add
   onSubmitTile(): void {
-    if (this.tileForm.invalid) {
-      return;
-    }
-
     const { bg, text, link } = this.tileForm.getRawValue();
 
-    this.tiles.update((list) => [
-      ...list,
-      {
-        id: crypto.randomUUID(),
-        text,
-        link,
-        bg,
-      },
-    ]);
+    const newTile: Tile = {
+      id: Date.now().toString(), // provizorní id
+      bg: bg || '#3366ff',
+      text: text ?? '',
+      link: link ?? '',
+    };
 
-    this.tileForm.reset({
-      bg: '#3366ff',
-      text: '',
-      link: '',
+    const sub = this.service.addTile(newTile).subscribe({
+      next: () => {
+        this.tileForm.reset({
+          bg: '#3366ff',
+          text: '',
+          link: '',
+        });
+      },
+      error: (err) => {
+        this.error.set(err.message ?? 'Chyba při přidávání tile');
+      },
     });
+
+    this.destroyRef.onDestroy(() => sub.unsubscribe());
   }
 
+  // drag & drop – změna pořadí (uloží se až na Update)
+  onDropTile(event: CdkDragDrop<readonly Tile[]>): void {
+    if (event.previousIndex === event.currentIndex) return;
+    this.service.reorderTiles(event.previousIndex, event.currentIndex);
+  }
+
+  // změna hodnoty v jednom řádku (TEXT nebo LINK)
+  onTileChange(id: string, field: 'text' | 'link', value: string): void {
+    this.service.updateTileLocal(id, { [field]: value } as Partial<Tile>);
+  }
+
+  // mazání řádku
   onDeleteTile(id: string): void {
-    this.tiles.update((list) => list.filter((tile) => tile.id !== id));
+    const sub = this.service.deleteTile(id).subscribe({
+      error: (err) => {
+        this.error.set(err.message ?? 'Chyba při mazání tile');
+      },
+    });
+
+    this.destroyRef.onDestroy(() => sub.unsubscribe());
   }
 
   onClose(): void {

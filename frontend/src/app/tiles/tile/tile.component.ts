@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { Tile } from '../tile.model';
 
 @Component({
@@ -9,10 +9,4 @@ import { Tile } from '../tile.model';
 })
 export class TileComponent {
   tile = input.required<Tile>();
-
-  delete = output<void>();
-
-  onDeleteClick() {
-    this.delete.emit();
-  }
 }

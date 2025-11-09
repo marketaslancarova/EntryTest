@@ -1,10 +1,11 @@
-<div
-  class="text-white text-center border-0 shadow-sm bg-gradient d-flex align-items-center justify-content-center ratio ratio-1x1"
+<a
+  class="tile text-white text-center border-0 shadow-sm bg-gradient d-flex align-items-center justify-content-center ratio ratio-1x1 text-decoration-none"
   [style.background]="tile().bg"
+  [attr.href]="tile().link || '#'"
+  target="_blank"
+  rel="noopener noreferrer"
 >
   <div class="d-flex flex-column align-items-center justify-content-center">
-    <h3 class="fw-semibold mb-2">{{ tile().text }}</h3>
-
-    <button type="button" (click)="onDeleteClick()" class="btn btn-outline-light btn-sm">🗑️</button>
+    <h3 class="fw-semibold mb-0">{{ tile().text }}</h3>
   </div>
-</div>
+</a>

@@ -1,69 +1,75 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { Tile } from './tile.model';
 import { HttpClient } from '@angular/common/http';
-import { ErrorService } from '../error.service';
 import { catchError, map, tap, throwError } from 'rxjs';
+import { moveItemInArray } from '@angular/cdk/drag-drop';
+import { Tile } from './tile.model';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class TilesService {
   private tiles = signal<Tile[]>([]);
-
   private http = inject(HttpClient);
-  // TODO: Uncomment when ErrorService is implemented
-  // private errorService = inject(ErrorService);
 
   readonly loadedTiles = this.tiles.asReadonly();
 
-  // methods
+  // 🔹 Načtení všech tiles
   loadTiles() {
     return this.http.get<{ tiles: Tile[] }>('http://localhost:3000/tiles').pipe(
       map((res) => res.tiles),
       tap((tiles) => this.tiles.set(tiles)),
-      catchError((err) => {
-        // TODO: Uncomment when ErrorService is implemented
-        // this.errorService.showError('Nepodařilo se načíst tiles.');
-        return throwError(() => new Error('Chyba při načítání tiles'));
-      })
+      catchError(() => throwError(() => new Error('Chyba při načítání tiles')))
     );
   }
 
+  // 🔹 Přidání nového tile – pošleme všechny tiles
   addTile(tile: Tile) {
-    const currentTiles = this.tiles();
+    const updatedTiles = [...this.tiles(), tile];
+    this.tiles.set(updatedTiles);
 
     return this.http
-      .put<{ tiles: Tile[] }>('http://localhost:3000/tiles', {
-        tile,
-      })
+      .put<{ tiles: Tile[] }>('http://localhost:3000/tiles', { tiles: updatedTiles })
       .pipe(
-        tap((res) => {
-          this.tiles.set(res.tiles);
-        }),
+        tap((res) => this.tiles.set(res.tiles)),
         catchError((err) => {
-          if (err.status === 409) {
-            // Tile už existuje
-            return throwError(() => new Error('Tile already exists.'));
-          }
-
-          return throwError(() => new Error('Error adding tile.'));
+          this.tiles.update((prev) => prev.filter((t) => t.id !== tile.id));
+          return throwError(() => new Error(err.message ?? 'Chyba při přidávání tile'));
         })
       );
   }
 
+  // 🔹 Mazání tile – taky pošleme všechny
   deleteTile(tileId: string) {
-    const currentTiles = this.tiles();
-    const updated = currentTiles.filter((tile) => tile.id !== tileId);
+    const updatedTiles = this.tiles().filter((tile) => tile.id !== tileId);
+    this.tiles.set(updatedTiles);
 
-    // Optimistické mazání
-    this.tiles.set(updated);
+    return this.http
+      .put<{ tiles: Tile[] }>('http://localhost:3000/tiles', { tiles: updatedTiles })
+      .pipe(
+        tap((res) => this.tiles.set(res.tiles)),
+        catchError((err) => {
+          return throwError(() => new Error(err.message ?? 'Chyba při mazání tile'));
+        })
+      );
+  }
 
-    return this.http.delete<{ tiles: Tile[] }>(`http://localhost:3000/tiles/${tileId}`).pipe(
-      catchError((err) => {
-        this.tiles.set(currentTiles);
-        // this.errorService.showError('Chyba při mazání tile.');
-        return throwError(() => new Error('Chyba při mazání tile'));
-      })
+  // 🔹 Update jednoho tile (při editaci text/link)
+  updateTileLocal(id: string, changes: Partial<Tile>) {
+    this.tiles.update((list) =>
+      list.map((tile) => (tile.id === id ? { ...tile, ...changes } : tile))
     );
+  }
+
+  // 🔹 Uložení všech tiles na backend (třeba při kliknutí na "Update" vlevo)
+  updateAllTiles(tiles: Tile[]) {
+    return this.http.put<{ tiles: Tile[] }>('http://localhost:3000/tiles', { tiles }).pipe(
+      tap((res) => this.tiles.set(res.tiles)),
+      catchError((err) => throwError(() => new Error(err.message ?? 'Chyba při ukládání tiles')))
+    );
+  }
+
+  // 🔹 Drag & drop reorder – jen změní pořadí, uloží až Update
+  reorderTiles(prevIndex: number, currIndex: number) {
+    const arr = [...this.tiles()];
+    moveItemInArray(arr, prevIndex, currIndex);
+    this.tiles.set(arr);
   }
 }
